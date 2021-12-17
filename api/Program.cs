@@ -1,34 +1,22 @@
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.StaticFiles;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace WebExplorer.Api {
+    public class Program {
+        public static void Main(string[] args) {
+            var hostBuilder = Host.CreateDefaultBuilder(args);
 
-builder.Services.AddControllers();
+            hostBuilder.ConfigureWebHostDefaults(builder => {
+                builder.UseStartup<Startup>();
+            });
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddSingleton<IContentTypeProvider, FileExtensionContentTypeProvider>();
-
-builder.Services.Configure<RouteOptions>(options => {
-    options.LowercaseUrls = true;
-});
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment()) {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
-    app.UseCors(policy => {
-        policy.AllowAnyOrigin();
-    });
+            hostBuilder.Build().Run();
+        }
+    }
 }
-
-app.UseHttpsRedirection();
-
-// app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
